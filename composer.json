@@ -1,5 +1,5 @@
 {
-    "name": "synapsepay/SynapsePayRest",
+    "name": "synapsepay/synapse-pay-rest",
     "description": "A simple SynapsePay v3 Rest API wrapper.",
     "require": {
         "php": ">=5.3.0"
