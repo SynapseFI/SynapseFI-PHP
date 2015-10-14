@@ -2,7 +2,9 @@
 ## Initialization
 
 ```php
-from synapse_pay_rest import Client
+require(dirname(__FILE__) . '/../../init.php');
+
+use SynapsePayRest\Client;
 
 $options = array(
 	'oauth_key'=> USER_OAUTH KEY, # Optional,

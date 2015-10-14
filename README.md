@@ -9,7 +9,7 @@ Check out the samples.md and our API documentation(http://docs.synapsepay.com/v3
 
 ## Installation
 
-composer install SynapsePayRest
+Download the files and include the init.php file.  Look at the sample for an example.
 
 ## License
 
