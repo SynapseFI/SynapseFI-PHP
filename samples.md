@@ -119,7 +119,7 @@ $file_response = $client->user->attach_file('https://s3.amazonaws.com/synapse_dj
 
 $nodes = $client->node->get();
 
-# Add Synapse Node
+# Add SYNAPSE-US Node
 
 $synapse_node_payload = array(
 	"type" => "SYNAPSE-US",
@@ -133,7 +133,7 @@ $synapse_node_payload = array(
 
 $ns = $client->node->add($synapse_node_payload);
 
-# Add ACH Node through Account and Routing Number Details
+# Add ACH-US Node through Account and Routing Number Details
 
 $ac_node_payload = array(
 	"type" => "ACH-US",
@@ -153,7 +153,7 @@ $ac_node_payload = array(
 $na = $client->node->add($ac_node_payload);
 
 
-# Verify Micro-Deposits on ACH Node
+# Verify ACH-US via Micro-Deposits
 
 $ac_verify_payload = array(
 	"micro" => array(0.1,0.1)
@@ -175,7 +175,7 @@ $login_node_payload = array(
 $node_login_response = $client->node->add($login_node_payload);
 
 
-# Verify Login Node
+# Verify ACH-US via MFA
 
 $login_verify_payload = array(
 	"access_token" => $node_login_response['mfa']['access_token'],
