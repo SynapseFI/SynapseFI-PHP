@@ -61,7 +61,6 @@ class User{
 			$path = '/oauth/'.$this->client->user_id;
 			$response = $this->client->post($path, $payload);
 			if(array_key_exists('oauth_key',$response)){
-				print 'ergfhipur3wghiu3qhrgioerqhgioqg3hf';
 				$this->client->update_headers(array('oauth_key' =>$response['oauth_key']));
 			}
 		}else{
@@ -113,7 +112,7 @@ class User{
 			$path = $this->create_user_path($this->client->user_id);
 			$response = $this->client->patch($path, $payload);
 		}else{
-			$response = HelperFunctions::create_custom_error_message('payload');
+			$response = HelperFunctions::create_custom_error_message('file_path');
 		}
 	}
 }

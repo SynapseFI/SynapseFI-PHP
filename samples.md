@@ -103,6 +103,11 @@ $kba_payload = array(
 
 $kba_response = $client->user->answer_kba($kba_payload);
 
+# Attach File
+
+$file_response = $client->user->attach_file('https://s3.amazonaws.com/synapse_django/static_assets/v3/landing_assets/images/Header-logo-white3-01.png');
+
+
 ```
 
 
