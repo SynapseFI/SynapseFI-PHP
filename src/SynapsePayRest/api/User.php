@@ -99,6 +99,23 @@ class User{
 		}
 		return $response;
 	}
+
+	function attach_file($file_path){
+		if($file_path){
+			$type = pathinfo($file_path, PATHINFO_EXTENSION);
+			$data = file_get_contents($file_path);
+			$base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+			$payload = array(
+				'doc' => array(
+					'attachment' => $base64
+				)
+			);
+			$path = $this->create_user_path($this->client->user_id);
+			$response = $this->client->patch($path, $payload);
+		}else{
+			$response = HelperFunctions::create_custom_error_message('payload');
+		}
+	}
 }
 
 ?>
