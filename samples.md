@@ -57,7 +57,7 @@ $user = $client->user->get($user['_id']);
 
 # Get All Users
 
-users_response = client.User.get()
+users_response = client->user->get()
 
 # Get Oauth Key
 
