@@ -102,8 +102,6 @@ class User{
 	function attach_file($file_path){
 		if($file_path){
 			$type = pathinfo($file_path, PATHINFO_EXTENSION);
-			// $file_url_path = rawurlencode($file_path);
-			// ini_set('user_agent', "CharlesUserAgent1.0");
 			$file_url_path = str_replace(' ', '%20', $file_path);
 			$data = $this->curl_get_contents($file_url_path);
 			if($data === FALSE){
