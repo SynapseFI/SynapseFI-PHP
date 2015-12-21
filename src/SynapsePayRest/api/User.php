@@ -1,6 +1,7 @@
 <?php
 
 namespace SynapsePayRest;
+use Exception;
 
 class User{
 
@@ -100,58 +101,24 @@ class User{
 	}
 
 	function attach_file($file_path){
-		if($file_path){
-			$type = pathinfo($file_path, PATHINFO_EXTENSION);
-			$mime_type = HelperFunctions::get_mime_type($type);
-			if(!$mime_type){
-				$message = 'File type currently not supported.';
-				$response = array(
-					'success' => FALSE,
-					'error' => array(
-						'en' => $message 
-					)
-				);
-				return $response;
-			}
-			$file_url_path = str_replace(' ', '%20', $file_path);
-			$data = $this->curl_get_contents($file_url_path);
-			if($data === FALSE){
-				$data = file_get_contents($file_url_path);
-			}
-			if($data === FALSE) {
-
-				$message = 'Could not download/open file.';
-				$response = array(
-					'success' => FALSE,
-					'error' => array(
-						'en' => $message 
-					)
-				);
-				return $response;
-			}else{
-				$base64 = 'data:' . $mime_type . ';base64,' . base64_encode($data);
-				$payload = array(
-					'doc' => array(
-						'attachment' => $base64
-					)
-				);
-				$path = $this->create_user_path($this->client->user_id);
-				$response = $this->client->patch($path, $payload);
-			}
-		}else{
-			$response = HelperFunctions::create_custom_error_message('file_path');
+		try{
+			$base64 = HelperFunctions::convert_to_base64($file_path);
+			$payload = array(
+				'doc' => array(
+					'attachment' => $base64
+				)
+			);
+			$path = $this->create_user_path($this->client->user_id);
+			$response = $this->client->patch($path, $payload);
+		}catch(Exception $e){
+			$response = array(
+				'success' => false,
+				'error' => array(
+					'en' => $e->getMessage() 
+				)
+			);
 		}
 		return $response;
-	}
-
-	function curl_get_contents($url){
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-		$data = curl_exec($ch);
-		curl_close($ch);
-		return $data;
 	}
 }
 

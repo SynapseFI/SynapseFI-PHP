@@ -2,6 +2,7 @@
 
 namespace SynapsePayRest;
 
+use Exception;
 /**
  * Simple static helper functions class for common tasks.
  */
@@ -215,5 +216,49 @@ class HelperFunctions{
 			"zip"       => "application/zip"
 		);
 		return $mimeTypes[$ext];
+	}
+
+	static function convert_to_base64($file_path){
+		if($file_path){
+			$type = pathinfo($file_path, PATHINFO_EXTENSION);
+			$mime_type = HelperFunctions::get_mime_type($type);
+			if(!$mime_type){
+				$message = 'File type currently not supported.';
+				throw new Exception($message);
+			}
+			if(file_exists($file_path) === FALSE){
+				$file_url_path = str_replace(' ', '%20', $file_path);
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_URL, $file_url_path);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+				curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+				$data = curl_exec($ch);
+				if(curl_errno($ch)){
+					$message = 'Could not download file.';
+					throw new Exception($message);
+				}
+				curl_close($ch);
+			}else{
+				$fh = fopen($file_path, 'r');
+				$data = fread($fh, filesize($file_path));
+				fclose($fh);
+				if($data === FALSE){
+					$message = 'Could not open file.';
+					throw new Exception($message);
+				}
+			}
+		}
+		$base64 = 'data:' . $mime_type . ';base64,' . base64_encode($data);
+		return $base64;
+	}
+
+	function curl_get_contents($url){
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+		$data = curl_exec($ch);
+		curl_close($ch);
+		return $data;
 	}
 }
