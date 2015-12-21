@@ -102,6 +102,17 @@ class User{
 	function attach_file($file_path){
 		if($file_path){
 			$type = pathinfo($file_path, PATHINFO_EXTENSION);
+			$mime_type = HelperFunctions::get_mime_type($type);
+			if(!$mime_type){
+				$message = 'File type currently not supported.';
+				$response = array(
+					'success' => FALSE,
+					'error' => array(
+						'en' => $message 
+					)
+				);
+				return $response;
+			}
 			$file_url_path = str_replace(' ', '%20', $file_path);
 			$data = $this->curl_get_contents($file_url_path);
 			if($data === FALSE){
@@ -116,8 +127,9 @@ class User{
 						'en' => $message 
 					)
 				);
+				return $response;
 			}else{
-				$base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+				$base64 = 'data:' . $mime_type . ';base64,' . base64_encode($data);
 				$payload = array(
 					'doc' => array(
 						'attachment' => $base64
