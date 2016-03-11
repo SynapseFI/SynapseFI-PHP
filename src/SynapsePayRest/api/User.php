@@ -32,7 +32,7 @@ class User{
 
 	function get($user_id=null, $page=null, $per_page=null, $query=null){
 		$path = $this->create_user_path($user_id);
-		if($user_id){
+		if(!$user_id){
 			if($query){
 				$path = $path . '?query=' . $query;
 				if($page){
