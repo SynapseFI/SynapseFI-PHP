@@ -37,15 +37,15 @@ class Node{
 					$path = $path . '&per_page=' . $per_page;
 				}
 				if($node_type){
-					$path = $path . '&node_type=' . $node_type;
+					$path = $path . '&type=' . $node_type;
 				}
 			}elseif($per_page){
 				$path = $path . '?per_page=' . $per_page;
 				if($node_type){
-					$path = $path . '&node_type=' . $node_type;
+					$path = $path . '&type=' . $node_type;
 				}
 			}elseif($node_type){
-				$path = $path . '?node_type=' . $node_type;
+				$path = $path . '?type=' . $node_type;
 			}
 		}
 		$response = $this->client->get($path);
