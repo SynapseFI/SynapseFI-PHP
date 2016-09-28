@@ -7,18 +7,18 @@ require(dirname(__FILE__) . '/../../init.php');
 use SynapsePayRest\Client;
 
 $options = array(
-	'oauth_key'=> USER_OAUTH KEY, # Optional,
+	'oauth_key'=> USER_OAUTH_KEY, # Optional,
 	'fingerprint'=> USER_FINGERPRINT,
 	'client_id'=> YOUR_CLIENT_ID,
 	'client_secret'=> YOUR_CLIENT_SECRET,
-	'development_mode'=> true, #True will ping sandbox.synapsepay.com
+	'development_mode'=> true, # true will ping sandbox.synapsepay.com
 	'ip_address'=> USER_IP_ADDRESS
 );
 
 
-$user = A_SYNAPSE_USER_OBJECT
+$user_id = USER_ID # optionals
 
-$client = new Client($options, $user['_id']); # USER_ID Optional
+$client = new Client($options, $user_id); // $user_id optional
 
 ```
 
@@ -26,87 +26,159 @@ $client = new Client($options, $user['_id']); # USER_ID Optional
 
 ```php
 
-#Create a User
+// Create a User
 
 $create_payload = array(
-	"logins" => array(
-		array(
-			"email" => "phpTest@synapsepay.com",
-			"password" => "test1234",
-			"read_only" => false
-		)
-	),
-	"phone_numbers" => array(
-		"901.111.1111"
-	),
-	"legal_names" => array(
-		"PHP TEST USER"
-	),
-	"extra" => array(
-		"note" => "Interesting user",
-		"supp_id" => "122eddfgbeafrfvbbb",
-		"is_business" => false
-	)
+    "logins" => array(
+        array(
+            "email" => "phpTest@synapsepay.com",
+            "password" => "test1234",
+            "read_only" => false
+        )
+    ),
+    "phone_numbers" => array(
+        "901.111.1111"
+    ),
+    "legal_names" => array(
+        "PHP TEST USER"
+    ),
+    "extra" => array(
+        "note" => "Interesting user",
+        "supp_id" => "122eddfgbeafrfvbbb",
+        "is_business" => false
+    )
 );
 
-$create_response = $c->user->create($create_payload);
+$create_response = $client->user->create($create_payload);
 
-# Get User
 
-$user = $client->user->get($user['_id']);
+// Get User
 
-# Get All Users
+$user = $client->user->get($user_id);
 
-users_response = client->user->get()
 
-# Get Oauth Key
+// Get All Users
+
+$users_response = $client->user->get();
+
+
+// Get OAuth Key
 
 $refresh_payload = array('refresh_token' => $user['refresh_token']);
 
-$refrest_response = $client->user->refresh($refresh_payload);
+$refresh_response = $client->user->refresh($refresh_payload);
 
 
-# Add KYC Information
+// Add Base Document and Physical/Social/Virtual Documents
 
-$ssn_payload = array(
-	"doc" => array(
-		"birth_day" => 4,
-		"birth_month" => 2,
-		"birth_year" => 1940,
-		"name_first" => "John",
-		"name_last" => "doe",
-		"address_street1" => "1 Infinite Loop",
-		"address_postal_code" => "95014",
-		"address_country_code" => "US",
-		"document_value" => "3333",
-		"document_type" => "SSN"
-	)
+$add_documents_payload = array(
+    "documents" => array(
+        array(
+            "email" => "test@test.com",
+            "phone_number" => "901-942-8167",
+            "ip" => "12134323",
+            "name" => "Charlie Brown",
+            "alias" => "Woof Woof",
+            "entity_type" => "M",
+            "entity_scope" => "Arts & Entertainment",
+            "day" => 2,
+            "month" => 5,
+            "year" => 2009,
+            "address_street" => "Some Farm",
+            "address_city" => "SF",
+            "address_subdivision" => "CA",
+            "address_postal_code" => "94114",
+            "address_country_code" => "US",
+            "virtual_docs" => array(
+                array(
+                    "document_value" => "111-111-3333",
+                    "document_type" => "SSN"
+                )
+            ),
+            "physical_docs" => array(
+                array(
+                    "document_value" => "data:text/csv;base64,SUQs==",
+                    "document_type" => "GOVT_ID"
+                ),
+                array(
+                    "document_value" => "data:text/csv;base64,SUQs==",
+                    "document_type" => "SELFIE"
+                )
+            ),
+            "social_docs" => array(
+                array(
+                    "document_value" => "https://www.facebook.com/sankaet",
+                    "document_type" => "FACEBOOK"
+                )
+            )
+        )
+    )
 );
 
-$ssn_response = $client->user->add_doc($ssn_payload);
+$add_documents_response = $client->user->add_doc($add_documents_payload);
 
 
-# Answer KBA Questions
+// Answer KBA Questions for Virtual Document (if needed)
+
+$base_document = end($add_documents_response['documents']); // to get most recent (or only) submitted set of KYC docs
+
+$virtual_docs = $base_document['virtual_docs'];
+
+function mfa_pending($virtual_doc)
+{
+    return($virtual_doc['status'] == 'SUBMITTED|MFA_PENDING');
+}
+
+$ssn = array_filter($virtual_docs, 'mfa_pending')[0];
 
 $kba_payload = array(
-	"doc" => array(
-		"question_set_id" => $ssn_r['question_set']['id'],
-		"answers" => array(
-			array("question_id" => 1, "answer_id" => 1),
-			array("question_id" => 2, "answer_id" => 1),
-			array("question_id" => 3, "answer_id" => 1),
-			array("question_id" => 4, "answer_id" => 1),
-			array("question_id" => 5, "answer_id" => 1),
-		)
-	)
+    'documents' => array(
+        array(
+            'id' => $base_document['id'],
+            'virtual_docs' => array(
+                array(
+                    'id' => $ssn['id'],
+                    'meta' => array(
+                        'question_set' => array(
+                            'answers' => array(
+                                array( 'question_id' => 1, 'answer_id' => 1 ),
+                                array( 'question_id' => 2, 'answer_id' => 1 ),
+                                array( 'question_id' => 3, 'answer_id' => 1 ),
+                                array( 'question_id' => 4, 'answer_id' => 1 ),
+                                array( 'question_id' => 5, 'answer_id' => 1 )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
 );
 
-$kba_response = $client->user->answer_kba($kba_payload);
+$kba_response = $client->user->update($kba_payload);
 
-# Attach File
 
-$file_response = $client->user->attach_file('https://s3.amazonaws.com/synapse_django/static_assets/v3/landing_assets/images/Header-logo-white3-01.png');
+// Update Existing Base Document
 
+$new_govt_id_attachment = "data:img/png;base64,SUQs==";
+
+$update_existing_docs_payload = array(
+    'documents' => array(
+        array(
+            'id' => $base_document['id'],
+            'email' => 'test3@test.com',
+            'phone_number' => '555-5555',
+            'physical_docs' => array(
+                array(
+                    'document_value' => $new_govt_id_attachment,
+                    'document_type' => 'GOVT_ID'
+                )
+            )
+        )
+    )
+);
+
+$update_existing_docs_response = $client->user->update($update_existing_docs_payload);
 
 ```
 
@@ -115,11 +187,12 @@ $file_response = $client->user->attach_file('https://s3.amazonaws.com/synapse_dj
 
 ```php
 
-# Get All Nodes
+// Get All Nodes
 
 $nodes = $client->node->get();
 
-# Add SYNAPSE-US Node
+
+// Add SYNAPSE-US Node
 
 $synapse_node_payload = array(
 	"type" => "SYNAPSE-US",
@@ -133,7 +206,8 @@ $synapse_node_payload = array(
 
 $ns = $client->node->add($synapse_node_payload);
 
-# Add ACH-US Node through Account and Routing Number Details
+
+// Add ACH-US Node through Account and Routing Number Details
 
 $ac_node_payload = array(
 	"type" => "ACH-US",
@@ -153,7 +227,7 @@ $ac_node_payload = array(
 $na = $client->node->add($ac_node_payload);
 
 
-# Verify ACH-US via Micro-Deposits
+// Verify ACH-US via Micro-Deposits
 
 $ac_verify_payload = array(
 	"micro" => array(0.1,0.1)
@@ -161,7 +235,8 @@ $ac_verify_payload = array(
 
 $nav = $client->node->verify($na['nodes'][0]['_id'],$ac_verify_payload);
 
-# Add ACH node through account login
+
+// Add ACH node through account login
 
 $login_node_payload = array(
 	"type" => "ACH-US",
@@ -175,7 +250,7 @@ $login_node_payload = array(
 $node_login_response = $client->node->add($login_node_payload);
 
 
-# Verify ACH-US via MFA
+// Verify ACH-US via MFA
 
 $login_verify_payload = array(
 	"access_token" => $node_login_response['mfa']['access_token'],
@@ -184,7 +259,8 @@ $login_verify_payload = array(
 
 $node_login_verify_response = $client->node->verify(null, $login_verify_payload);
 
-# Delete a Node
+
+// Delete a Node
 
 $node_delete_response = $client->node->delete($node_login_verify_response['nodes'][0]['_id']);
 
@@ -194,7 +270,7 @@ $node_delete_response = $client->node->delete($node_login_verify_response['nodes
 
 ```php
 
-#Create a Transaction
+// Create a Transaction
 
 $trans_payload = array(
 	"to" => array(
@@ -226,18 +302,17 @@ $trans_payload = array(
 $create_response = $client->trans->create($ns['nodes'][0]['_id'],$trans_payload);
 
 
-# Get a Transaction
+// Get a Transaction
 
 $tg = $client->trans->get($ns['nodes'][0]['_id'], $create_response['_id']);
 
 
-# Get All Transactions
+// Get All Transactions
 
 $tg = $client->trans->get($ns['nodes'][0]['_id'], null);
 
 
-
-# Update Transaction
+// Update Transaction
 
 $update_payload = array(
 	'comment' => 'test comment'
@@ -246,7 +321,7 @@ $update_payload = array(
 $tu = $client->trans->update($ns['nodes'][0]['_id'], $create_response['_id'], $update_payload);
 
 
-# Delete Transaction
+// Delete Transaction
 
 $td = $client->trans->delete($ns['nodes'][0]['_id'], $create_response['_id']);
 
