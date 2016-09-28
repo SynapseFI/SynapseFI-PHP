@@ -28,16 +28,24 @@ class Node{
 		return $response;
 	}
 
-	function get($node_id=null, $page=null){
+	function get($node_id=null, $page=null, $per_page=null, $node_type=null){
 		$path = $this->create_node_path($node_id);
-		if($node_id){
+		if(!$node_id){
 			if($page){
-				$path = $path . '?page=' . $query;
+				$path = $path . '?page=' . $page;
 				if($per_page){
 					$path = $path . '&per_page=' . $per_page;
 				}
+				if($node_type){
+					$path = $path . '&type=' . $node_type;
+				}
 			}elseif($per_page){
 				$path = $path . '?per_page=' . $per_page;
+				if($node_type){
+					$path = $path . '&type=' . $node_type;
+				}
+			}elseif($node_type){
+				$path = $path . '?type=' . $node_type;
 			}
 		}
 		$response = $this->client->get($path);
