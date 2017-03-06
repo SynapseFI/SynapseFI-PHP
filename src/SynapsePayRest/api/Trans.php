@@ -34,7 +34,7 @@ class Trans{
 		$path = $this->create_trans_path($node_id);
 		if($node_id){
 			if($page){
-				$path = $path . '?page=' . $query;
+				$path = $path . '?page=' . $page;
 				if($per_page){
 					$path = $path . '&per_page=' . $per_page;
 				}
