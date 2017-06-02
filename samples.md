@@ -56,6 +56,9 @@ $create_response = $client->user->create($create_payload);
 
 $user = $client->user->get($user_id);
 
+**optional, full_dehydrate='yes will return extra info on user:
+$user = $client->user->get($user_id, null, null, null, $full_dehydrate='yes');
+
 
 // Get All Users
 
@@ -146,6 +149,14 @@ $update_existing_docs_response = $client->user->update($update_existing_docs_pay
 ## Node API Calls
 
 ```php
+
+// Get Node
+
+$node = $client->node->get($node_id);
+
+**optional, full_dehydrate='yes will return transaction analysis on specific node:
+$node = $client->node->get($node_id, null, null, null, $full_dehydrate='yes');
+
 
 // Get All Nodes
 
