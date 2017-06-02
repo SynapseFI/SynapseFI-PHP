@@ -30,7 +30,7 @@ class User{
 		return $response;
 	}
 
-	function get($user_id=null, $page=null, $per_page=null, $query=null){
+	function get($user_id=null, $page=null, $per_page=null, $query=null, $full_dehydrate=null){
 		$path = $this->create_user_path($user_id);
 		if(!$user_id){
 			if($query){
@@ -49,6 +49,9 @@ class User{
 			}elseif($per_page){
 				$path = $path . '?per_page=' . $per_page;
 			}
+		}
+		if($user_id && $full_dehydrate){
+			$path = $path . '?full_dehydrate='.$full_dehydrate;
 		}
 		$response = $this->client->get($path);
 		if(array_key_exists('_id',$response)){

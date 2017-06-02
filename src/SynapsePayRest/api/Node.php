@@ -28,7 +28,7 @@ class Node{
 		return $response;
 	}
 
-	function get($node_id=null, $page=null, $per_page=null, $node_type=null){
+	function get($node_id=null, $page=null, $per_page=null, $node_type=null, $full_dehydrate=null){
 		$path = $this->create_node_path($node_id);
 		if(!$node_id){
 			if($page){
@@ -47,6 +47,9 @@ class Node{
 			}elseif($node_type){
 				$path = $path . '?type=' . $node_type;
 			}
+		}
+		if($node_id && $full_dehydrate){
+			$path = $path . '?full_dehydrate='.$full_dehydrate;
 		}
 		$response = $this->client->get($path);
 		return $response;
