@@ -118,46 +118,6 @@ $add_documents_payload = array(
 $add_documents_response = $client->user->add_doc($add_documents_payload);
 
 
-// Answer KBA Questions for Virtual Document (if needed)
-
-$base_document = end($add_documents_response['documents']); // to get most recent (or only) submitted set of KYC docs
-
-$virtual_docs = $base_document['virtual_docs'];
-
-function mfa_pending($virtual_doc)
-{
-    return($virtual_doc['status'] == 'SUBMITTED|MFA_PENDING');
-}
-
-$ssn = array_filter($virtual_docs, 'mfa_pending')[0];
-
-$kba_payload = array(
-    'documents' => array(
-        array(
-            'id' => $base_document['id'],
-            'virtual_docs' => array(
-                array(
-                    'id' => $ssn['id'],
-                    'meta' => array(
-                        'question_set' => array(
-                            'answers' => array(
-                                array( 'question_id' => 1, 'answer_id' => 1 ),
-                                array( 'question_id' => 2, 'answer_id' => 1 ),
-                                array( 'question_id' => 3, 'answer_id' => 1 ),
-                                array( 'question_id' => 4, 'answer_id' => 1 ),
-                                array( 'question_id' => 5, 'answer_id' => 1 )
-                            )
-                        )
-                    )
-                )
-            )
-        )
-    )
-);
-
-$kba_response = $client->user->update($kba_payload);
-
-
 // Update Existing Base Document
 
 $new_govt_id_attachment = "data:img/png;base64,SUQs==";
