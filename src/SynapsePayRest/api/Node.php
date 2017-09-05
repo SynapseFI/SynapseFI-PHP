@@ -64,6 +64,13 @@ class Node{
 		}
 		return $response;
 	}
+	
+	function resend_micro($node_id){
+		$path = $this->create_node_path($node_id);
+		$path = $path . '?resend_micro=YES';
+		$response = $this->client->patch($path, {});
+		return $response;
+	}
 
 	function delete($node_id){
 		$path = $this->create_node_path($node_id);
