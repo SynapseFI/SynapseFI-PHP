@@ -298,3 +298,91 @@ $td = $client->trans->delete($ns['nodes'][0]['_id'], $create_response['_id']);
 
 
 ```
+## Subnet API Calls
+
+```php
+
+// Create a Subnet
+
+$subnet_payload = array(
+    "nickname" => "subnet test php"
+);
+
+$create_response = $client->subnet->create($ns['nodes'][0]['_id'], $subnet_payload);
+
+
+// Get a Subnet
+
+$sg = $client->subnet->get($ns['nodes'][0]['_id'], $create_response['_id']);
+
+
+// Get All Subnets
+
+$sg = $client->subnet->get($ns['nodes'][0]['_id'], null);
+
+
+// Update Subnet
+
+$update_payload = array(
+    'allowed' => 'LOCKED'
+);
+
+$su = $client->subnet->update($ns['nodes'][0]['_id'], $create_response['_id'], $update_payload);
+
+
+```
+## Subscription API Calls
+
+```php
+
+// Create a Subscription
+
+$subscription_payload = array(
+    "scope" => [
+                "USERS|POST",
+                "USER|PATCH",
+                "NODES|POST",
+                "NODE|PATCH",
+                "TRANS|POST",
+                "TRAN|PATCH"],
+    "url" => "https://requestb.in/zp216zzp"
+);
+
+$create_response = $client->subscription->create($subscription_payload);
+
+
+// Get a Subscription
+
+$sg = $client->subscription->get($create_response['_id']);
+
+
+// Get All Subscriptions
+
+$sg = $client->subscription->get();
+
+
+// Update Subscription
+
+$update_payload = array(
+    "url" => "https://requestb.in/somethingnew"
+);
+
+
+$subup = $client->subscription->update($create_response['_id'], $update_payload);
+
+```
+## Issue Public Key API Calls
+```php
+
+//Issue Public Key With Specific Scope
+
+$pk_payload = "CLIENT|CONTROLS";
+
+$pk = $client->publickey->get($pk_payload);
+
+
+//Issue Public Key With All Scopes
+
+$pk = $client->publickey->get();
+
+```
