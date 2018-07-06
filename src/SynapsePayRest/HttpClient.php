@@ -15,7 +15,7 @@ class HttpClient{
     if($options['development_mode']){
       $this->baseUrl = 'https://uat-api.synapsefi.com/v3.1';
     }else{
-      $this->baseUrl = 'https://synapsepay.com/api/3';
+      $this->baseUrl = 'https://api.synapsefi.com/v3.1';
     }
   }
 

@@ -22,6 +22,9 @@ class Client{
 		$this->user = new User($this->client);
 		$this->node = new Node($this->client);
 		$this->trans = new Trans($this->client);
+		$this->subnet = new Subnet($this->client);
+		$this->subscription = new Subscription($this->client);
+	    $this->publickey = new PublicKey($this->client);
 	}
 }
 ?>
