@@ -3,6 +3,7 @@
 namespace SynapsePayRest;
 
 class HttpClient{
+  protected $printToConsole = true;
 
   function __construct($options, $user_id=null){
     $this->client_id = $options['client_id'];
@@ -16,6 +17,10 @@ class HttpClient{
       $this->baseUrl = 'https://uat-api.synapsefi.com/v3.1';
     }else{
       $this->baseUrl = 'https://api.synapsefi.com/v3.1';
+    }
+
+    if (isset($options['printToConsole'])) {
+      $this->printToConsole = $options['printToConsole'];
     }
   }
 
@@ -64,14 +69,19 @@ class HttpClient{
 
   function handle_response($response,$ch){
     $response = json_decode($response, true);
-    print_r($response);
+    $this->handleOutput($response);
     if($response == false || curl_error($ch)) {
       $err = curl_getinfo($ch);
       curl_close($ch);
       if($response != false){
         return $response;
       }
-      print $this->handle_errors($err);
+
+      if ($this->printToConsole) {
+        print $this->handle_errors($err);
+      } else {
+        $this->handle_errors($err);
+      }
     } else {
       curl_close($ch);
       return $response;
@@ -79,7 +89,7 @@ class HttpClient{
   }
 
   function handle_errors($err){
-    print_r($err);
+    $this->handleOutput($err);
 
     if($err['http_code'] == 0){
       $err['http_code'] = 408;
@@ -132,7 +142,11 @@ class HttpClient{
 
   function get($path){
     $url = $this->baseUrl . $path;
-    print $url;
+
+    if ($this->printToConsole) {
+      print $url;
+    }
+
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_POST, false);
     $options = $this->create_headers($url);
@@ -171,5 +185,12 @@ class HttpClient{
     curl_setopt_array($ch, $options);
     $response = curl_exec($ch);
     return $this->handle_response($response,$ch);
+  }
+
+  private function handleOutput($payload)
+  {
+    if ($this->printToConsole) {
+      print_r($payload);
+    }
   }
 }
