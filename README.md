@@ -9,11 +9,8 @@ Check out the samples.md and our API documentation(http://docs.synapsepay.com/v3
 
 ## Installation
 
-Download the files and include the init.php file.  Look at the sample for an example.
+Download the files and include the synapse_rest/client.php file.  Look at the sample for an example.
 
-or
-
-`composer require synapsepay/synapse-pay-rest` 
 
 
 ## License
