@@ -12,11 +12,9 @@ class Trans{
 
   function create_trans_path($node_id, $trans_id=null){
     $path = '/users/' . $this->client->user_id . '/nodes/' . $node_id . '/trans';
-    $path = str_replace("Array","",$path);
     if($trans_id){
       $path = $path . '/' . $trans_id;
     }
-    #print $path;
     return $path;
   }
 
