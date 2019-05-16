@@ -6,7 +6,8 @@ Simple API wrapper for SynapsePay REST V3 API.  This wrapper aims to handle the 
 ## create a test.php file in this repo
 
 ### Format it this way
-```<?php
+```
+<?php
 require(dirname(__FILE__) . '/init.php');
 
 use SynapsePayRest\Client;
