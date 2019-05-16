@@ -3,6 +3,46 @@
 Simple API wrapper for SynapsePay REST V3 API.  This wrapper aims to handle the headers for each API request and appropriate error handling.
 
 
+## create a test.php file in this repo
+
+### Format it this way
+```
+<?php
+require(dirname(__FILE__) . '/init.php');
+
+use SynapsePayRest\Client;
+
+$options = array(
+	'oauth_key' => "",
+	'fingerprint'=> '',
+	'client_id'=> "",
+	'client_secret'=> "",
+	'development_mode'=> true,
+	'ip_address'=> ""
+);	
+
+
+$user_id = "";
+
+$client = new Client($options, $user_id);
+
+$node = "";
+$trans = "";
+$node = $client->node->get($node);
+$tg = $client->trans->get($node);
+
+print $tg;
+?>
+```
+
+Check for transactions. You can check other functions too in the examples
+
+### Run
+```
+php test.php
+```
+
+
 ## Code Example
 
 Check out the samples.md and our API documentation(http://docs.synapsepay.com/v3.1) for examples.

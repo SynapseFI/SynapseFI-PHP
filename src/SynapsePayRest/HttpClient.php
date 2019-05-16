@@ -70,7 +70,7 @@ class HttpClient{
   function handle_response($response,$ch){
     $response = json_decode($response, true);
     $this->handleOutput($response);
-    if($response == false || curl_error($ch)) {
+    if(is_null($reponse) || $response == false || curl_error($ch)) {
       $err = curl_getinfo($ch);
       curl_close($ch);
       if($response != false){
