@@ -31,11 +31,7 @@ class Trans{
   }
 
   function get($node_id=null, $trans_id=null, $page=null, $per_page=null){
-    if($trans_id){
-      $path = $this->create_trans_path($node_id, $trans_id);
-    }else{
-      $path = $this->create_trans_path($node_id);
-    }
+    $path = $this->create_trans_path($node_id);
     if($node_id){
       if($page){
         $path = $path . '?page=' . $query;
