@@ -80,9 +80,6 @@ class Node{
 			}
 		}elseif($per_page){
 			$path = $path . '?per_page=' . $per_page;
-			if($node_type){
-				$path = $path . '&type=' . $node_type;
-			}
 		}
 		$response = $this->client->get($path);
 		return $response;
