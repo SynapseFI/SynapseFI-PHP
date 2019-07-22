@@ -72,19 +72,19 @@ class Node{
 	}
 
 	function statements($node_id, $page=null, $per_page=null){
-	    $path = $this->create_node_path($node_id) . '/statements';
-        if($page){
-            $path = $path . '?page=' . $page;
-            if($per_page){
-                $path = $path . '&per_page=' . $per_page;
-            }
-        }elseif($per_page){
-            $path = $path . '?per_page=' . $per_page;
-            if($node_type){
-                $path = $path . '&type=' . $node_type;
-            }
-        }
-        $response = $this->client->get($path);
-        return $response;
-    }
+		$path = $this->create_node_path($node_id) . '/statements';
+		if($page){
+			$path = $path . '?page=' . $page;
+			if($per_page){
+				$path = $path . '&per_page=' . $per_page;
+			}
+		}elseif($per_page){
+			$path = $path . '?per_page=' . $per_page;
+			if($node_type){
+				$path = $path . '&type=' . $node_type;
+			}
+		}
+		$response = $this->client->get($path);
+		return $response;
+	}
 }
